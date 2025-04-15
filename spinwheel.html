@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tool Spinner Wheel</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    #container {
+      text-align: center;
+    }
+    canvas {
+      background: #ffffff;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="spinCanvas" width="1400" height="800"></canvas><br>
+    <button id="spinButton">Spin the Wheel</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('spinCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const segments = 6;
+    const segmentAngle = 360 / segments;
+    const radius = 260; // Larger wheel radius
+    const colors = ['#FFC50A', '#6F7BBB', '#2DBFCB', '#FFC50A', '#6F7BBB', '#2DBFCB'];
+    const labels = [
+      'Phillips Driver',
+      'Flathead Driver',
+      'Hex Key Driver',
+      'Socket Driver',
+      'Phillips Driver',
+      'TORX Driver'
+    ];
+
+    let currentAngle = 0;
+    let isSpinning = false;
+    let spinResult = '';
+    let finalAngle = 0;
+
+    function drawWheel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the wheel
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(currentAngle);
+
+      for (let i = 0; i < segments; i++) {
+        const startAngle = (segmentAngle * i) * Math.PI / 180;
+        const endAngle = (segmentAngle * (i + 1)) * Math.PI / 180;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+
+        // Label
+        const textAngle = (startAngle + endAngle) / 2;
+        ctx.save();
+        ctx.rotate(textAngle);
+        ctx.fillStyle = '#000000';
+        ctx.font = '24px Arial'; // Keep text size unchanged
+        ctx.textAlign = 'center';
+        ctx.fillText(labels[i], radius * 0.65, 10);
+        ctx.restore();
+      }
+
+      ctx.restore();
+
+      // Draw fixed needle
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.beginPath();
+      ctx.moveTo(0, -radius - 10);
+      ctx.lineTo(-14, -radius - 40);
+      ctx.lineTo(14, -radius - 40);
+      ctx.closePath();
+      ctx.fillStyle = '#000000';
+      ctx.fill();
+      ctx.restore();
+
+      // Draw result text
+      if (spinResult) {
+        ctx.font = '30px Arial';
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Result: ${spinResult}`, canvas.width / 2 + radius + 90, canvas.height / 2 + 10);
+      }
+    }
+
+    function spinWheel() {
+      if (isSpinning) return;
+      isSpinning = true;
+      spinResult = '';
+
+      const spinDuration = 3; // seconds
+      const randomDegrees = Math.random() * 360 + 360 * 10; // One randomizer
+      const targetAngle = randomDegrees % 360;
+      finalAngle = targetAngle;
+
+      const start = performance.now();
+
+      function animate(time) {
+        const elapsed = (time - start) / 1000;
+        if (elapsed < spinDuration) {
+          const progress = elapsed / spinDuration;
+          const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+          currentAngle = (randomDegrees * eased) * Math.PI / 180;
+          drawWheel();
+          requestAnimationFrame(animate);
+        } else {
+          currentAngle = (randomDegrees % 360) * Math.PI / 180;
+          determineResult();
+          drawWheel();
+          isSpinning = false;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function determineResult() {
+      // Add 180° to shift result from bottom to top under the needle
+      let degrees = (360 - finalAngle + 90 + 180) % 360;
+      const index = Math.floor(degrees / segmentAngle) % segments;
+      spinResult = labels[index];
+    }
+
+    document.getElementById('spinButton').addEventListener('click', spinWheel);
+    drawWheel();
+  </script>
+</body>
+</html>
