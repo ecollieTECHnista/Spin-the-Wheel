@@ -8,23 +8,45 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
       margin: 0;
       background-color: #f0f0f0;
       font-family: Arial, sans-serif;
     }
+
     #container {
       text-align: center;
     }
+
     canvas {
       background: #ffffff;
       border: 1px solid #ccc;
+    }
+
+    #spinButton {
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #6F7BBB;
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      margin-top: 24px;
+      cursor: pointer;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #spinButton:hover {
+      transform: scale(1.05);
+      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
 <body>
   <div id="container">
-    <canvas id="spinCanvas" width="1400" height="800"></canvas><br>
+    <canvas id="spinCanvas" width="1400" height="750"></canvas><br>
     <button id="spinButton">Spin the Wheel</button>
   </div>
 
@@ -34,16 +56,9 @@
 
     const segments = 6;
     const segmentAngle = 360 / segments;
-    const radius = 260; // Larger wheel radius
+    const radius = 260;
     const colors = ['#FFC50A', '#6F7BBB', '#2DBFCB', '#FFC50A', '#6F7BBB', '#2DBFCB'];
-    const labels = [
-      'Phillips Driver',
-      'Flathead Driver',
-      'Hex Key Driver',
-      'Socket Driver',
-      'Phillips Driver',
-      'TORX Driver'
-    ];
+    const labels = ['Phillips Driver', 'Flathead Driver', 'Hex Key Driver', 'Socket Driver', 'Phillips Driver', 'TORX Driver'];
 
     let currentAngle = 0;
     let isSpinning = false;
@@ -53,7 +68,7 @@
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw the wheel
+      // Draw wheel
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(currentAngle);
@@ -74,7 +89,7 @@
         ctx.save();
         ctx.rotate(textAngle);
         ctx.fillStyle = '#000000';
-        ctx.font = '24px Arial'; // Keep text size unchanged
+        ctx.font = '28px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(labels[i], radius * 0.65, 10);
         ctx.restore();
@@ -82,7 +97,7 @@
 
       ctx.restore();
 
-      // Draw fixed needle
+      // Draw needle (fixed)
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.beginPath();
@@ -94,7 +109,7 @@
       ctx.fill();
       ctx.restore();
 
-      // Draw result text
+      // Show result to the right of the wheel
       if (spinResult) {
         ctx.font = '30px Arial';
         ctx.fillStyle = '#000000';
@@ -108,9 +123,9 @@
       isSpinning = true;
       spinResult = '';
 
-      const spinDuration = 3; // seconds
-      const randomDegrees = Math.random() * 360 + 360 * 10; // One randomizer
-      const targetAngle = randomDegrees % 360;
+      const spinDuration = 3;
+      const randomDegrees = Math.random() * 360 + 360 * 10;
+      const targetAngle = (randomDegrees % 360);
       finalAngle = targetAngle;
 
       const start = performance.now();
@@ -119,7 +134,7 @@
         const elapsed = (time - start) / 1000;
         if (elapsed < spinDuration) {
           const progress = elapsed / spinDuration;
-          const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+          const eased = 1 - Math.pow(1 - progress, 3);
           currentAngle = (randomDegrees * eased) * Math.PI / 180;
           drawWheel();
           requestAnimationFrame(animate);
@@ -135,7 +150,6 @@
     }
 
     function determineResult() {
-      // Add 180° to shift result from bottom to top under the needle
       let degrees = (360 - finalAngle + 90 + 180) % 360;
       const index = Math.floor(degrees / segmentAngle) % segments;
       spinResult = labels[index];
