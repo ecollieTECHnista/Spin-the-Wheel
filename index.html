@@ -56,7 +56,7 @@
 
     const segments = 6;
     const segmentAngle = 360 / segments;
-    const radius = 320; // increased from 260
+    const radius = 320;
     const colors = ['#FFC50A', '#6F7BBB', '#2DBFCB', '#FFC50A', '#6F7BBB', '#2DBFCB'];
     const labels = ['Phillips Driver', 'Flathead Driver', 'Hex Key Driver', 'Socket Driver', 'Phillips Driver', 'TORX Driver'];
 
@@ -89,9 +89,10 @@
         ctx.save();
         ctx.rotate(textAngle);
         ctx.fillStyle = '#000000';
-        ctx.font = '28px Arial'; // keep label size the same
+        ctx.font = '28px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(labels[i], radius * 0.45, 10);
+        ctx.textBaseline = 'middle';
+        ctx.fillText(labels[i], radius * 0.45, 0);
         ctx.restore();
       }
 
