@@ -87,15 +87,14 @@
         ctx.fillStyle = colors[i];
         ctx.fill();
 
-        // Draw label (wrapped into two lines)
+        // Draw label
         const textAngle = (startAngle + endAngle) / 2;
         ctx.save();
         ctx.rotate(textAngle);
-        ctx.translate(radius * 0.4, 0); // move text toward center
-        ctx.rotate(-textAngle); // unrotate text
+        ctx.translate(radius * 0.36, 0); // pull inward to fit text
 
         ctx.fillStyle = "#000000";
-        ctx.font = "16px Arial";
+        ctx.font = "28px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
@@ -104,8 +103,8 @@
         const line1 = words[0];
         const line2 = words.slice(1).join(" ");
 
-        ctx.fillText(line1, 0, -10);
-        ctx.fillText(line2, 0, 12);
+        ctx.fillText(line1, 0, -14);
+        if (line2) ctx.fillText(line2, 0, 14);
 
         ctx.restore();
       }
