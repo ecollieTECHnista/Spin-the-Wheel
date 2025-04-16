@@ -91,7 +91,8 @@
         const textAngle = (startAngle + endAngle) / 2;
         ctx.save();
         ctx.rotate(textAngle);
-        ctx.translate(radius * 0.36, 0); // pull inward to fit text
+        ctx.translate(radius * 0.30, 0); // Pull inward further than before
+        ctx.rotate(-textAngle); // Keep text upright
 
         ctx.fillStyle = "#000000";
         ctx.font = "28px Arial";
@@ -103,8 +104,8 @@
         const line1 = words[0];
         const line2 = words.slice(1).join(" ");
 
-        ctx.fillText(line1, 0, -14);
-        if (line2) ctx.fillText(line2, 0, 14);
+        ctx.fillText(line1, 0, -16);
+        if (line2) ctx.fillText(line2, 0, 16);
 
         ctx.restore();
       }
