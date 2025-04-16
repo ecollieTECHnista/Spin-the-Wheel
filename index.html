@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Tool Spinner Wheel</title>
   <style>
     body {
@@ -14,16 +14,13 @@
       background-color: #f0f0f0;
       font-family: Arial, sans-serif;
     }
-
     #container {
       text-align: center;
     }
-
     canvas {
       background: #ffffff;
       border: 1px solid #ccc;
     }
-
     #spinButton {
       padding: 16px 32px;
       font-size: 20px;
@@ -37,7 +34,6 @@
       box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-
     #spinButton:hover {
       transform: scale(1.05);
       box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
@@ -46,29 +42,35 @@
 </head>
 <body>
   <div id="container">
-    <canvas id="spinCanvas" width="1600" height="850"></canvas><br>
+    <canvas id="spinCanvas" width="1600" height="850"></canvas><br />
     <button id="spinButton">Spin the Wheel</button>
   </div>
 
   <script>
-    const canvas = document.getElementById('spinCanvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("spinCanvas");
+    const ctx = canvas.getContext("2d");
 
     const segments = 6;
     const segmentAngle = 360 / segments;
     const radius = 320;
-    const colors = ['#FFC50A', '#6F7BBB', '#2DBFCB', '#FFC50A', '#6F7BBB', '#2DBFCB'];
-    const labels = ['Phillips Driver', 'Flathead Driver', 'Hex Key Driver', 'Socket Driver', 'Phillips Driver', 'TORX Driver'];
+    const colors = ["#FFC50A", "#6F7BBB", "#2DBFCB", "#FFC50A", "#6F7BBB", "#2DBFCB"];
+    const labels = [
+      "Phillips Driver",
+      "Flathead Driver",
+      "Hex Key Driver",
+      "Socket Driver",
+      "Phillips Driver",
+      "TORX Driver"
+    ];
 
     let currentAngle = 0;
     let isSpinning = false;
-    let spinResult = '';
+    let spinResult = "";
     let finalAngle = 0;
 
     function drawWheel() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw wheel
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(currentAngle);
@@ -77,6 +79,7 @@
         const startAngle = (segmentAngle * i) * Math.PI / 180;
         const endAngle = (segmentAngle * (i + 1)) * Math.PI / 180;
 
+        // Draw segment
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.arc(0, 0, radius, startAngle, endAngle);
@@ -84,21 +87,32 @@
         ctx.fillStyle = colors[i];
         ctx.fill();
 
-        // Label
+        // Draw label (wrapped into two lines)
         const textAngle = (startAngle + endAngle) / 2;
         ctx.save();
         ctx.rotate(textAngle);
-        ctx.fillStyle = '#000000';
-        ctx.font = '20px Arial'; // reduced from 28px
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(labels[i], radius * 0.45, 0); // draw text closer to center
+        ctx.translate(radius * 0.4, 0); // move text toward center
+        ctx.rotate(-textAngle); // unrotate text
+
+        ctx.fillStyle = "#000000";
+        ctx.font = "16px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        const label = labels[i];
+        const words = label.split(" ");
+        const line1 = words[0];
+        const line2 = words.slice(1).join(" ");
+
+        ctx.fillText(line1, 0, -10);
+        ctx.fillText(line2, 0, 12);
+
         ctx.restore();
       }
 
       ctx.restore();
 
-      // Draw needle (fixed)
+      // Draw needle
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.beginPath();
@@ -106,27 +120,31 @@
       ctx.lineTo(-14, -radius - 40);
       ctx.lineTo(14, -radius - 40);
       ctx.closePath();
-      ctx.fillStyle = '#000000';
+      ctx.fillStyle = "#000000";
       ctx.fill();
       ctx.restore();
 
-      // Show result to the right of the wheel
+      // Show result
       if (spinResult) {
-        ctx.font = '30px Arial';
-        ctx.fillStyle = '#000000';
-        ctx.textAlign = 'left';
-        ctx.fillText(`Result: ${spinResult}`, canvas.width / 2 + radius + 90, canvas.height / 2 + 10);
+        ctx.font = "30px Arial";
+        ctx.fillStyle = "#000000";
+        ctx.textAlign = "left";
+        ctx.fillText(
+          `Result: ${spinResult}`,
+          canvas.width / 2 + radius + 90,
+          canvas.height / 2 + 10
+        );
       }
     }
 
     function spinWheel() {
       if (isSpinning) return;
       isSpinning = true;
-      spinResult = '';
+      spinResult = "";
 
       const spinDuration = 3;
       const randomDegrees = Math.random() * 360 + 360 * 10;
-      const targetAngle = (randomDegrees % 360);
+      const targetAngle = randomDegrees % 360;
       finalAngle = targetAngle;
 
       const start = performance.now();
@@ -156,7 +174,7 @@
       spinResult = labels[index];
     }
 
-    document.getElementById('spinButton').addEventListener('click', spinWheel);
+    document.getElementById("spinButton").addEventListener("click", spinWheel);
     drawWheel();
   </script>
 </body>
