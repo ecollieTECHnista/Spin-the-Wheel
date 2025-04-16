@@ -87,15 +87,23 @@
         ctx.fillStyle = colors[i];
         ctx.fill();
 
-        // Draw label
-        const textAngle = (startAngle + endAngle) / 2;
-       ctx.save();
+        // Label (rotated outward like a spoke)
+const textAngle = (startAngle + endAngle) / 2;
+
+ctx.save();
 ctx.rotate(textAngle);
-ctx.translate(radius * 0.45, 0); // slight inward pull
 ctx.fillStyle = "#000000";
 ctx.font = "28px Arial";
-ctx.textAlign = "center";
+ctx.textAlign = "left";
 ctx.textBaseline = "middle";
+
+// Split the label if needed (optional)
+const label = labels[i];
+ctx.translate(radius * 0.4, 0); // adjust distance from center
+ctx.rotate(Math.PI / 2);       // rotate 90° to point outward
+ctx.fillText(label, 0, 0);     // draw the label
+ctx.restore();
+
 
 // Draw entire label as one line (rotate with the wedge)
 ctx.fillText(labels[i], 0, 0);
